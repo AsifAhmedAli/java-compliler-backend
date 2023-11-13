@@ -40,7 +40,7 @@ app.use(
   })
 );
 
-const port = 5000;
+const port = 3000;
 
 app.use("/", router);
 server.listen(port, () => {

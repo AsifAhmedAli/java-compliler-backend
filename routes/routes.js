@@ -59,6 +59,8 @@ router.post("/add-submission", user_controllers.new_submission);
 
 router.get("/get-one-assignment/:aid", user_controllers.get_one_assignment);
 router.post("/execute-code", user_controllers.execute_code);
+router.get("/get-one-submission/:subid", user_controllers.get_one_submission);
+
 // new_submission
 // get-students-whole-list
 // router.get("/doctor-logout", user_controllers.doctor_logout);
