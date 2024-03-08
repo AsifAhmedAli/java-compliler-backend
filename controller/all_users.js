@@ -432,114 +432,144 @@ const new_submission = async (req, res) => {
   }
 };
 
-const execute_code = (req, res) => {
+const execute_code = async (req, res) => {
   const { code } = req.body;
+  var options = {
+    'method': 'POST',
+    'url': '52.90.27.199:4567/executeCode',
+    'headers': {
+      'Content-Type': 'text/plain'
+    },
+    body: 'public class HelloWorld {\n        public static String main(String[] args) {\n        //System.out.println("Hello, World!"); \n        int kah = 2 + 2;\n        System.out.println("kah1");  // Print the result for visibility\n        return "hellow bete1";\n    }\n}'
+
+  };
+  await request(options, function (error, response) {
+    if (error) throw new Error(error);
+    console.log(response.body);
+  });
   // console.log(code);
   // var request = require("request");
-  var options = {
-    method: "POST",
-    url: "https://05c350ad.compilers.sphere-engine.com/api/v4/submissions?access_token=43c2c16d3e55bdcfee2d805097cebf0c",
-    formData: {
-      compilerId: "10",
-      // input: 'System.out.println("Hello, World!");',
-      source: code,
-    },
-  };
-  request(options, function (error, response) {
-    if (error) throw new Error(error);
-    // console.log(response.body);
-    const pasred = JSON.parse(response.body);
-    // console.log(pasred);
-    const subid = pasred.id;
-    setTimeout(function () {
-      // console.log(subid);
-      var options4 = {
-        method: "GET",
-        url: `https://05c350ad.compilers.sphere-engine.com/api/v4/submissions/${subid}?access_token=43c2c16d3e55bdcfee2d805097cebf0c`,
-      };
-      request(options4, function (error, response) {
-        if (error) throw new Error(error);
-        // console.log(response.body);
-        const pasred_data = JSON.parse(response.body);
-        console.log(pasred_data);
-        if (pasred_data.result.status.code == 1) {
-          setTimeout(function () {
-            // console.log(subid);
-            var options3 = {
-              method: "GET",
-              url: `https://05c350ad.compilers.sphere-engine.com/api/v4/submissions/${subid}?access_token=43c2c16d3e55bdcfee2d805097cebf0c`,
-            };
-            request(options3, function (error, response) {
-              if (error) throw new Error(error);
-              // console.log(response.body);
-              const pasred_data = JSON.parse(response.body);
-              if (pasred_data.result.status.code == 1) {
-                setTimeout(function () {
-                  // console.log(subid);
-                  var options2 = {
-                    method: "GET",
-                    url: `https://05c350ad.compilers.sphere-engine.com/api/v4/submissions/${subid}?access_token=43c2c16d3e55bdcfee2d805097cebf0c`,
-                  };
-                  request(options2, function (error, response) {
-                    if (error) throw new Error(error);
-                    // console.log(response.body);
-                    const pasred_data = JSON.parse(response.body);
-                    if (pasred_data.result.status.code == 1) {
-                      return res
-                        .status(200)
-                        .json({ output: "No response from the server" });
-                    } else if (pasred_data.result.status.code == 11) {
-                      return res
-                        .status(200)
-                        .json({ output: "Compilation Error" });
-                    } else {
-                      var options5 = {
-                        method: "GET",
-                        url: pasred_data.result.streams.output.uri,
-                      };
-                      request(options5, function (error, response) {
-                        if (error) throw new Error(error);
-                        // console.log(response.body);
-                        return res.status(200).json({ output: response.body });
-                      });
-                    }
-                  });
-                }, 3000);
-              } else if (pasred_data.result.status.code == 11) {
-                return res.status(200).json({ output: "Compilation Error" });
-              } else {
-                var options6 = {
-                  method: "GET",
-                  url: pasred_data.result.streams.output.uri,
-                };
-                request(options6, function (error, response) {
-                  if (error) throw new Error(error);
-                  // console.log(response.body);
-                  return res.status(200).json({ output: response.body });
-                });
-              }
-            });
-          }, 3000);
-        } else if (pasred_data.result.status.code == 11) {
-          return res.status(200).json({ output: "Compilation Error" });
-        } else {
-          var options7 = {
-            method: "GET",
-            url: pasred_data.result.streams.output.uri,
-          };
-          request(options7, function (error, response) {
-            if (error) throw new Error(error);
-            // console.log(response.body);
-            return res.status(200).json({ output: response.body });
-          });
-        }
-        // console.log(pasred_data.result.status.code);
-      });
-    }, 3000);
+  // var options = {
+  //   method: "POST",
+  //   url: "https://05c350ad.compilers.sphere-engine.com/api/v4/submissions?access_token=43c2c16d3e55bdcfee2d805097cebf0c",
+  //   formData: {
+  //     compilerId: "10",
+  //     // input: 'System.out.println("Hello, World!");',
+  //     source: code,
+  //   },
+  // };
+  // request(options, function (error, response) {
+  //   if (error) throw new Error(error);
+  //   console.log(response.body);
+  //   const pasred = JSON.parse(response.body);
+  //   // console.log(pasred);
+  //   const subid = pasred.id;
+
+
+      //     var options4 = {
+      //   method: "POST",
+      //   url: `https://05c350ad.compilers.sphere-engine.com/api/v4/submissions/${subid}?access_token=43c2c16d3e55bdcfee2d805097cebf0c`,
+      // };
+      // request(options4, function (error, response) {
+      //   if (error) throw new Error(error);
+      //   // console.log(response.body);
+      //   const pasred_data = JSON.parse(response.body);
+      //   console.log(pasred_data);
+      //   if (pasred_data.result.status.code == 1) {
+      //     setTimeout(function () {
+      //       // console.log(subid);
+      //     })
+      //   }
+      // });
+    // setTimeout(function () {
+    //   // console.log(subid);
+    //   var options4 = {
+    //     method: "GET",
+    //     url: `https://05c350ad.compilers.sphere-engine.com/api/v4/submissions/${subid}?access_token=43c2c16d3e55bdcfee2d805097cebf0c`,
+    //   };
+    //   request(options4, function (error, response) {
+    //     if (error) throw new Error(error);
+    //     // console.log(response.body);
+    //     const pasred_data = JSON.parse(response.body);
+    //     console.log(pasred_data);
+    //     if (pasred_data.result.status.code == 1) {
+    //       setTimeout(function () {
+    //         // console.log(subid);
+    //         var options3 = {
+    //           method: "GET",
+    //           url: `https://05c350ad.compilers.sphere-engine.com/api/v4/submissions/${subid}?access_token=43c2c16d3e55bdcfee2d805097cebf0c`,
+    //         };
+    //         request(options3, function (error, response) {
+    //           if (error) throw new Error(error);
+    //           // console.log(response.body);
+    //           const pasred_data = JSON.parse(response.body);
+    //           if (pasred_data.result.status.code == 1) {
+    //             setTimeout(function () {
+    //               // console.log(subid);
+    //               var options2 = {
+    //                 method: "GET",
+    //                 url: `https://05c350ad.compilers.sphere-engine.com/api/v4/submissions/${subid}?access_token=43c2c16d3e55bdcfee2d805097cebf0c`,
+    //               };
+    //               request(options2, function (error, response) {
+    //                 if (error) throw new Error(error);
+    //                 // console.log(response.body);
+    //                 const pasred_data = JSON.parse(response.body);
+    //                 if (pasred_data.result.status.code == 1) {
+    //                   return res
+    //                     .status(200)
+    //                     .json({ output: "No response from the server" });
+    //                 } else if (pasred_data.result.status.code == 11) {
+    //                   return res
+    //                     .status(200)
+    //                     .json({ output: "Compilation Error" });
+    //                 } else {
+    //                   var options5 = {
+    //                     method: "GET",
+    //                     url: pasred_data.result.streams.output.uri,
+    //                   };
+    //                   request(options5, function (error, response) {
+    //                     if (error) throw new Error(error);
+    //                     // console.log(response.body);
+    //                     return res.status(200).json({ output: response.body });
+    //                   });
+    //                 }
+    //               });
+    //             }, 3000);
+    //           } else if (pasred_data.result.status.code == 11) {
+    //             return res.status(200).json({ output: "Compilation Error" });
+    //           } else {
+    //             var options6 = {
+    //               method: "GET",
+    //               url: pasred_data.result.streams.output.uri,
+    //             };
+    //             request(options6, function (error, response) {
+    //               if (error) throw new Error(error);
+    //               // console.log(response.body);
+    //               return res.status(200).json({ output: response.body });
+    //             });
+    //           }
+    //         });
+    //       }, 3000);
+    //     } else if (pasred_data.result.status.code == 11) {
+    //       return res.status(200).json({ output: "Compilation Error" });
+    //     } else {
+    //       var options7 = {
+    //         method: "GET",
+    //         url: pasred_data.result.streams.output.uri,
+    //       };
+    //       request(options7, function (error, response) {
+    //         if (error) throw new Error(error);
+    //         // console.log(response.body);
+    //         return res.status(200).json({ output: response.body });
+    //       });
+    //     }
+    //     // console.log(pasred_data.result.status.code);
+    //   });
+    // }, 3000);
 
     // console.log(subid);
-  });
-
+  // });
+// 
   // console.log(code);
 };
 
