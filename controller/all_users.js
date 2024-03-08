@@ -440,12 +440,12 @@ const execute_code = async (req, res) => {
     'headers': {
       'Content-Type': 'text/plain'
     },
-    body: 'public class HelloWorld {\n        public static String main(String[] args) {\n        //System.out.println("Hello, World!"); \n        int kah = 2 + 2;\n        System.out.println("kah1");  // Print the result for visibility\n        return "hellow bete1";\n    }\n}'
-
+    body: code
   };
   await request(options, function (error, response) {
     if (error) throw new Error(error);
     console.log(response.body);
+    return res.status(200).json({ output: response.body });
   });
   // console.log(code);
   // var request = require("request");
