@@ -436,7 +436,7 @@ const execute_code = async (req, res) => {
   const { code } = req.body;
   var options = {
     'method': 'POST',
-    'url': '52.90.27.199:4567/executeCode',
+    'url': 'http://52.90.27.199:4567/executeCode',
     'headers': {
       'Content-Type': 'text/plain'
     },
