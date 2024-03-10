@@ -29,7 +29,7 @@ const new_student = async (req, res) => {
           return res.status(400).json({ message: "Email already registered" });
         }
         const insertQuery = `INSERT INTO users (sname, email, pass, status1) VALUES (?, ?, ?, 1)`;
-        await conn.query(insertQuery, [name, email, password]);
+        conn.query(insertQuery, [name, email, password]);
 
         // const token = crypto.randomBytes(20).toString("hex");
         // const updateQuery = `UPDATE users SET token = ? WHERE email = ?`;
@@ -238,7 +238,7 @@ const add_assignment = async (req, res) => {
           });
         }
         const insertQuery = `INSERT INTO assignment(cid, question, answer, aname) VALUES (?, ?, ?, ?)`;
-        await conn.query(insertQuery, [cid, question, answer, aname]);
+         conn.query(insertQuery, [cid, question, answer, aname]);
         res.status(201).json({
           message: "Assignment added successfully.",
         });
