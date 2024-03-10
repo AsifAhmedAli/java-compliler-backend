@@ -87,7 +87,7 @@ const new_course = async (req, res) => {
           return res.status(400).json({ message: "Course already registered" });
         }
         const insertQuery = `INSERT INTO courses (cname) VALUES (?)`;
-        await conn.query(insertQuery, [name]);
+        conn.query(insertQuery, [name]);
 
         // const token = crypto.randomBytes(20).toString("hex");
         // const updateQuery = `UPDATE users SET token = ? WHERE email = ?`;
