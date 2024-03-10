@@ -393,7 +393,7 @@ const new_submission = async (req, res) => {
             .json({ message: "Assignment already submitted" });
         }
         const insertQuery = `INSERT INTO submissions (sid, aid, code, answer) VALUES (?, ?, ?, ?)`;
-        await conn.query(insertQuery, [sid, aid, code, answer]);
+        conn.query(insertQuery, [sid, aid, code, answer]);
 
         // const token = crypto.randomBytes(20).toString("hex");
         // const updateQuery = `UPDATE users SET token = ? WHERE email = ?`;
