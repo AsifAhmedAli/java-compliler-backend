@@ -5,6 +5,7 @@ const nodemailer = require("nodemailer");
 const fs = require("fs");
 const path = require("path");
 var request = require("request");
+const prettier = require("prettier");
 const crypto = require("crypto");
 const { json } = require("express");
 
@@ -690,6 +691,33 @@ const get_one_submission = (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
+const get_prettified_code = (req, res) => {
+  const javaText = `
+  public class HelloWorldExample{
+    public static void main(String args[]){
+      System.out.println("Hello World !");
+    }
+  }
+  `;
+  
+  const formattedText = prettier.format(javaText, {
+    parser: "java",
+    tabWidth: 2
+  });
+
+  // try {
+  //   const code = req.body.code;
+
+  //   // Format Java code using google-java-format
+  //   const formattedCode = formatCode(code);
+  //   console.log(formattedCode)
+    return res.status(200).json({ result: formattedText });
+  // } catch (error) {
+  //   console.error('Error formatting code:', error);
+  //   return res.status(500).json({ error: 'Internal Server Error' });
+  // }
+}
 module.exports = {
   new_student,
   student_login,
@@ -706,6 +734,7 @@ module.exports = {
   new_submission,
   get_one_assignment,
   execute_code,
+  get_prettified_code
   //   addtotime,
   //   get_weight,
   //   get_auth_token,
