@@ -5,7 +5,7 @@ const nodemailer = require("nodemailer");
 const fs = require("fs");
 const path = require("path");
 var request = require("request");
-const prettier = require("prettier");
+// const prettier = require("prettier");
 const crypto = require("crypto");
 const { json } = require("express");
 
