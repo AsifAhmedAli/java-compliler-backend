@@ -36,27 +36,27 @@ const new_student = async (req, res) => {
         // const updateQuery = `UPDATE users SET token = ? WHERE email = ?`;
         // await conn.query(updateQuery, [token, email]);
 
-        // const transporter = nodemailer.createTransport({
-        //   service: "Gmail",
-        //   port: 465,
-        //   secure: true,
-        //   auth: {
-        //     user: process.env.EMAIL,
-        //     pass: process.env.PASSWORD,
-        //   },
-        // });
-        // const mailOptions = {
-        //   from: process.env.EMAIL,
-        //   to: email,
-        //   subject: "Student Registration",
-        //   // text: `Hello ${name}, Thank you for registering as a doctor. Please click on the link below to verify your email address.`,
-        //   html: `<p>Hello ${name},</p> <p>You are registered as a student.
-        //   <br>Name: ${name}<br>
-        //   Email: ${email} <br>
-        //   Password: ${password}</p>`,
-        //   // html: `Please click this link to verify your email: <a href="http://localhost:3000/verify/${token}">Verify Email</a>`
-        // };
-        // await transporter.sendMail(mailOptions);
+        const transporter = nodemailer.createTransport({
+          service: "Gmail",
+          port: 465,
+          secure: true,
+          auth: {
+            user: process.env.EMAIL,
+            pass: process.env.PASSWORD,
+          },
+        });
+        const mailOptions = {
+          from: process.env.EMAIL,
+          to: email,
+          subject: "Student Registration",
+          // text: `Hello ${name}, Thank you for registering as a doctor. Please click on the link below to verify your email address.`,
+          html: `<p>Hello ${name},</p> <p>You are registered as a student.
+          <br>Name: ${name}<br>
+          Email: ${email} <br>
+          Password: ${password}</p>`,
+          // html: `Please click this link to verify your email: <a href="http://localhost:3000/verify/${token}">Verify Email</a>`
+        };
+        await transporter.sendMail(mailOptions);
 
         res.status(201).json({
           message: "Student registered successfully.",
@@ -160,44 +160,70 @@ const get_all_students = (req, res) => {
   }
 };
 
-const get_courses_of_one_student = (req, res) => {
+const get_courses_of_one_student = async (req, res) => {
   const sid = req.params.id;
   console.log(sid);
-  var courses_list = [];
-  const query = `SELECT * FROM student_enrollment where sid = ?`;
-  try {
-    conn.query(query, [sid], (err, results) => {
-      if (err) {
-        throw err;
-      }
-      if (results.length === 0) {
-        return res.status(404).json({ message: "Course not found" });
-      }
-      if (results.length > 0) {
-        results.forEach((element) => {
-          conn.query(
-            `SELECT * FROM courses where id = ?`,
-            [element.cid],
-            (err, results) => {
-              if (err) {
-                throw err;
-              }
-              if (results.length > 0) {
-                courses_list.push(results);
-              }
-              console.log(results);
-              return res.status(200).json(results);
-            }
-          );
-        });
-      }
-      // return res.status(200).json(results);
+
+  const getEnrollments = () => {
+    return new Promise((resolve, reject) => {
+      const enrollmentQuery = `SELECT * FROM student_enrollment where sid = ?`;
+      conn.query(enrollmentQuery, [sid], (err, results) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(results);
+        }
+      });
     });
+  };
+
+  const getCourses = (courseIds) => {
+    return new Promise((resolve, reject) => {
+      const courses = [];
+      let counter = 0;
+
+      if (courseIds.length === 0) {
+        resolve(courses);
+      }
+
+      courseIds.forEach((element) => {
+        const courseQuery = `SELECT * FROM courses where id = ?`;
+        conn.query(courseQuery, [element], (err, results) => {
+          if (err) {
+            reject(err);
+          } else {
+            // console.log(results)
+            courses.push(results);
+            counter++;
+
+            if (counter === courseIds.length) {
+              // console.log(courses)
+              resolve(courses);
+            }
+          }
+        });
+      });
+    });
+  };
+
+  try {
+    const enrollments = await getEnrollments();
+    // console.log(enrollments)
+    if (enrollments.length === 0) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    const courseIds = enrollments.map((element) => element.cid);
+    // console.log(courseIds)
+    const courses = await getCourses(courseIds);
+
+    console.log(courses);
+    return res.status(200).json(courses);
   } catch (error) {
+    console.error(error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
-
 const unenrol_student = (req, res) => {
   const { sid, cid } = req.body;
   // console.log(sid);
@@ -692,19 +718,19 @@ const get_one_submission = (req, res) => {
   }
 };
 
-const get_prettified_code = (req, res) => {
-  const javaText = `
-  public class HelloWorldExample{
-    public static void main(String args[]){
-      System.out.println("Hello World !");
-    }
-  }
-  `;
+// const get_prettified_code = (req, res) => {
+//   const javaText = `
+//   public class HelloWorldExample{
+//     public static void main(String args[]){
+//       System.out.println("Hello World !");
+//     }
+//   }
+//   `;
   
-  const formattedText = prettier.format(javaText, {
-    parser: "java",
-    tabWidth: 2
-  });
+//   const formattedText = prettier.format(javaText, {
+//     parser: "java",
+//     tabWidth: 2
+//   });
 
   // try {
   //   const code = req.body.code;
@@ -712,12 +738,12 @@ const get_prettified_code = (req, res) => {
   //   // Format Java code using google-java-format
   //   const formattedCode = formatCode(code);
   //   console.log(formattedCode)
-    return res.status(200).json({ result: formattedText });
+    // return res.status(200).json({ result: formattedText });
   // } catch (error) {
   //   console.error('Error formatting code:', error);
   //   return res.status(500).json({ error: 'Internal Server Error' });
   // }
-}
+// }
 module.exports = {
   new_student,
   student_login,
@@ -734,7 +760,7 @@ module.exports = {
   new_submission,
   get_one_assignment,
   execute_code,
-  get_prettified_code
+  // get_prettified_code
   //   addtotime,
   //   get_weight,
   //   get_auth_token,
