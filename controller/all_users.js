@@ -15,7 +15,10 @@ const new_student = async (req, res) => {
   const name = req.body.name;
   const email = req.body.email;
   const password = req.body.password;
-
+  const data= {
+    email: email,
+    password: password
+  }
   // console.log(email);
   // console.log(password);
   try {
@@ -33,7 +36,7 @@ const new_student = async (req, res) => {
         const insertQuery = `INSERT INTO users (sname, email, pass, status1) VALUES (?, ?, ?, 1)`;
         conn.query(insertQuery, [name, email, password]);
         const compiledTemplate = handlebars.compile(emailTemplate);
-        const html = compiledTemplate(email , password);
+        const html = compiledTemplate(data);
         const transporter = nodemailer.createTransport({
           service: "Gmail",
           port: 465,
