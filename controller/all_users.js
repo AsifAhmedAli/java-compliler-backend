@@ -6,9 +6,10 @@ const fs = require("fs");
 const path = require("path");
 var request = require("request");
 // const prettier = require("prettier");
+const handlebars = require('handlebars');
 const crypto = require("crypto");
 const { json } = require("express");
-
+const emailTemplate = fs.readFileSync('./email/new-email.html', 'utf8');
 const new_student = async (req, res) => {
   // console.log(req.body);
   const name = req.body.name;
@@ -35,7 +36,8 @@ const new_student = async (req, res) => {
         // const token = crypto.randomBytes(20).toString("hex");
         // const updateQuery = `UPDATE users SET token = ? WHERE email = ?`;
         // await conn.query(updateQuery, [token, email]);
-
+        const compiledTemplate = handlebars.compile(emailTemplate);
+        const html = compiledTemplate();
         const transporter = nodemailer.createTransport({
           service: "Gmail",
           port: 465,
@@ -50,10 +52,7 @@ const new_student = async (req, res) => {
           to: email,
           subject: "Student Registration",
           // text: `Hello ${name}, Thank you for registering as a doctor. Please click on the link below to verify your email address.`,
-          html: `<p>Hello ${name},</p> <p>You are registered as a student.
-          <br>Name: ${name}<br>
-          Email: ${email} <br>
-          Password: ${password}</p>`,
+          html: html,
           // html: `Please click this link to verify your email: <a href="http://localhost:3000/verify/${token}">Verify Email</a>`
         };
         await transporter.sendMail(mailOptions);
