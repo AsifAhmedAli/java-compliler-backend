@@ -32,12 +32,8 @@ const new_student = async (req, res) => {
         }
         const insertQuery = `INSERT INTO users (sname, email, pass, status1) VALUES (?, ?, ?, 1)`;
         conn.query(insertQuery, [name, email, password]);
-
-        // const token = crypto.randomBytes(20).toString("hex");
-        // const updateQuery = `UPDATE users SET token = ? WHERE email = ?`;
-        // await conn.query(updateQuery, [token, email]);
         const compiledTemplate = handlebars.compile(emailTemplate);
-        const html = compiledTemplate();
+        const html = compiledTemplate(email , password);
         const transporter = nodemailer.createTransport({
           service: "Gmail",
           port: 465,
